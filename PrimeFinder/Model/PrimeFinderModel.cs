@@ -8,19 +8,19 @@ namespace PrimeFinder.Model
     /// <summary>
     /// Finds the greatest prime number
     /// </summary>
-    public class PrimeFinderModel : IDisposable
+    public sealed class PrimeFinderModel : IDisposable
     {
         public int MaxPrime { get; set; }
 
         public int EndPrimeRange { get; set; }
 
         public int StartPrimeRange { get; set; }
-
-        // Numbers found that are primes
-        private HashSet<int> Primes;
-
+                
         // Numbers found that are not primes
         private HashSet<int> NotPrimes = new HashSet<int>();
+
+        // Numbers found that are primes
+        private List<int> Primes = new List<int>();
 
         private CancellationTokenSource Cts { get; set; }
 
@@ -68,42 +68,96 @@ namespace PrimeFinder.Model
             MaxPrime = 2;
 
             int currentNumber = 0;
+
             int outerCounter = 0;
 
             var outerTotal = EndPrimeRange - MaxPrime;
 
-            while (outerCounter++ <= outerTotal)
-            {                
+            // Add the first prime
+            Primes.Add(MaxPrime);
+
+            while (outerCounter++ <= outerTotal)                                 
+            {        
                 for (currentNumber = MaxPrime; currentNumber <= EndPrimeRange; currentNumber++)
                 {
                     if (cts.IsCancellationRequested)
                         return;
 
-                    NotPrimes.Add(currentNumber * MaxPrime);
+                    var notPrime = currentNumber * MaxPrime;
+
+                    // Don't add it to the list if it's beyond the maximum range, or less than the already known max prime.
+                    if (notPrime > EndPrimeRange)
+                        break;
+
+                    if (notPrime < MaxPrime)
+                        continue;
+
+                    // Check against some known prime numbers.                    
+                    if (IsDivisibleByKnownPrimes(notPrime))
+                        continue;
+
+                    // Add it to the known list of not primes
+                    NotPrimes.Add(notPrime);
                 }
 
+                // Find the prime candidates greater than MaxPrime
                 for (currentNumber = MaxPrime + 1; currentNumber <= EndPrimeRange; currentNumber++)
                 {
                     if (cts.IsCancellationRequested)
                         return;
+                    
+                    // Don't add it to the list if it's beyond the maximum range, or less than the already known max prime.
+                    if (currentNumber > EndPrimeRange || currentNumber < MaxPrime)
+                        continue;
 
+                    if (IsDivisibleByKnownPrimes(currentNumber))
+                        continue;
+                                        
+                    // Check to see if we've found a new maximum prime
                     if (!NotPrimes.Contains(currentNumber))
                     {
                         MaxPrime = currentNumber;
+
+                        // Only keep a limited list of known primes to reduce checking time.
+                        if (Primes.Count < 30)
+                            Primes.Add(MaxPrime);
+
+                        // Notify the view model that it's time for an update.
                         PrimeFound?.Invoke(this, EventArgs.Empty);
                         break;
                     }
-                }
+                }                
             }
             
         }
-        
+       
+        /// <summary>
+        /// Check to see if the number is divisible by any primes
+        /// </summary>
+        /// <param name="number">The number to check</param>
+        /// <returns>True, if it is divisible</returns>
+                 
+        private bool IsDivisibleByKnownPrimes(int number)
+        {
+            foreach (var prime in Primes)
+            {
+                if (number % prime == 0)
+                    return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Cancel the FindPrimes task
         /// </summary>
         public void StopPrimeFinder()
         {
+            // Cancel the prime search
             Cts.Cancel();
+
+            // Clean up our tracking hash set.
+            NotPrimes.Clear();            
         }
 
         /// <summary>
@@ -111,7 +165,7 @@ namespace PrimeFinder.Model
         /// </summary>
         public void Dispose()
         {
-            Cts.Dispose();
+            Cts.Dispose();           
         }
     }
 

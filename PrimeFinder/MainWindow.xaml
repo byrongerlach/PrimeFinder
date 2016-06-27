@@ -8,7 +8,7 @@
         xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
         mc:Ignorable="d ignore"
         Height="300"
-        Width="300"
+        Width="500"
         Title="Prime Number Generator"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Window.Resources>

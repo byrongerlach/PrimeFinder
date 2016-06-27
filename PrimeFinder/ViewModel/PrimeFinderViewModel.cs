@@ -10,7 +10,7 @@ namespace PrimeFinder.ViewModel
     /// See http://www.mvvmlight.net
     /// </para>
     /// </summary>
-    public class PrimeFinderViewModel : ViewModelBase
+    public sealed class PrimeFinderViewModel : ViewModelBase, IDisposable
     {
         private PrimeFinderModel PrimeFinder;
         private PrimeTimerModel PrimeTimer { get; set; }
@@ -31,7 +31,7 @@ namespace PrimeFinder.ViewModel
             StatusMessage = "Running";
 
             // Start the timer
-            PrimeTimer = new PrimeTimerModel(5);
+            PrimeTimer = new PrimeTimerModel(60);
 
             // Listen for timer tick events
             PrimeTimer.DispatcherTimer.Tick += new EventHandler(OnTick);
@@ -39,9 +39,11 @@ namespace PrimeFinder.ViewModel
             // Listen for the timer completed event
             PrimeTimer.TimerCompleted += new EventHandler(OnTimerCompleted);
 
-            // Start the prime finder
-            PrimeFinder = new PrimeFinderModel(100000);
+            // Start the prime finder            
+            PrimeFinder = new PrimeFinderModel(100000000);
             PrimeFinder.Start();
+
+            // Listen for the PrimeFound event
             PrimeFinder.PrimeFound += new EventHandler(OnPrimeFound);
         }
 
@@ -135,6 +137,11 @@ namespace PrimeFinder.ViewModel
         private void OnPrimeFound(object sender, EventArgs e)
         {
             MaxPrime = PrimeFinder.MaxPrime;            
+        }
+
+        public void Dispose()
+        {
+            PrimeFinder.Dispose();
         }
     }
 }
