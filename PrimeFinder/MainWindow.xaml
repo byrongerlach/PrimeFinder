@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
         mc:Ignorable="d ignore"
         Height="300"
         Width="300"
-        Title="MVVM Light Application"
+        Title="Prime Number Generator"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
-    
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -19,14 +20,50 @@
     </Window.Resources>
 
     <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
 
-        <TextBlock FontSize="36"
+        <TextBlock Grid.Row ="0" FontSize="24"
                    FontWeight="Bold"
-                   Foreground="Purple"
-                   Text="{Binding WelcomeTitle}"
+                   Foreground="Black"
+                   Text="{Binding WindowTitle}"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    TextWrapping="Wrap" />
+
+        <TextBlock Grid.Row ="1" FontSize="20"
+                   FontWeight="Bold"
+                   Foreground="Orange"                   
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap" >        
+                    <Run Text="Seconds Elapsed:"/>
+                    <Run Foreground="Black" Text="{Binding Counter}"/>
+        </TextBlock>
+
+        <TextBlock Grid.Row ="2" FontSize="20"
+                   FontWeight="Bold"
+                   Foreground="Orange"                   
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap" >
+                    <Run Text="Max Prime Found:"/>
+                    <Run Foreground="Black" Text="{Binding MaxPrime}"/>
+        </TextBlock>
+
+        <TextBlock Grid.Row ="3" FontSize="20"
+                   FontWeight="Bold"
+                   Foreground="Orange"                   
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap" >                    
+                    <Run Foreground="ForestGreen" Text="{Binding StatusMessage}"/>
+        </TextBlock>
 
     </Grid>
 </Window>
