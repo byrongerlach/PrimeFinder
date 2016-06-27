@@ -79,6 +79,7 @@
     <Compile Include="Model\DataItem.cs" />
     <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\IDataService.cs" />
+    <Compile Include="Model\PrimeFinderModel.cs" />
     <Compile Include="Model\PrimeTimerModel.cs" />
     <Compile Include="ViewModel\PrimeFinderViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

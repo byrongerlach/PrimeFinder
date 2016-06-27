@@ -12,6 +12,7 @@ namespace PrimeFinder.ViewModel
     /// </summary>
     public class PrimeFinderViewModel : ViewModelBase
     {
+        private PrimeFinderModel PrimeFinder;
         private PrimeTimerModel PrimeTimer { get; set; }
 
         // Private backing fields
@@ -35,8 +36,13 @@ namespace PrimeFinder.ViewModel
             // Listen for timer tick events
             PrimeTimer.DispatcherTimer.Tick += new EventHandler(OnTick);
 
-            // List for the timer completed event
-            PrimeTimer.TimerCompleted += new EventHandler(OnTimerCompleted);                       
+            // Listen for the timer completed event
+            PrimeTimer.TimerCompleted += new EventHandler(OnTimerCompleted);
+
+            // Start the prime finder
+            PrimeFinder = new PrimeFinderModel(100000);
+            PrimeFinder.Start();
+            PrimeFinder.PrimeFound += new EventHandler(OnPrimeFound);
         }
 
         /// <summary>
@@ -118,6 +124,17 @@ namespace PrimeFinder.ViewModel
         private void OnTimerCompleted(object sender, EventArgs e)
         {
             StatusMessage = "Max time elapsed";
+            PrimeFinder.StopPrimeFinder();
+        }
+
+        /// <summary>
+        /// Whenever a prime is found, update MaxPrime
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">Event args</param>
+        private void OnPrimeFound(object sender, EventArgs e)
+        {
+            MaxPrime = PrimeFinder.MaxPrime;            
         }
     }
 }
